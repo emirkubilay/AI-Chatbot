@@ -1,0 +1,126 @@
+﻿A stack is LIFO (last in, first out): the last item added is the first one removed, like a stack of plates.
+Core operations (all O(1)):
+* push(x): add x to the top
+* pop(): remove and return the top item
+* peek() / top(): return the top item without removing it
+* isEmpty(): check whether the stack has no items
+* size(): number of items
+Implementations:
+* Array-based: keep an index top pointing to the last item. Push writes at top + 1, pop reads at top and decrements. A fixed-size array can overflow; a dynamic array resizes (doubling), so push is O(1) amortized.
+* Linked-list-based: push and pop at the head. Every operation is O(1) and there is no fixed capacity, at the cost of extra memory per node for the pointer.
+Errors to know:
+* Stack underflow: pop or peek on an empty stack.
+* Stack overflow: push onto a full fixed-size stack.
+Common uses:
+* Function call stack (recursion)
+* Undo/redo in editors
+* Checking balanced parentheses: push each opening bracket, pop on each closing bracket and check it matches; the string is balanced if every pop matches and the stack ends empty
+* Evaluating postfix expressions, e.g. 3 4 + 2 * = 14
+* Converting infix to postfix
+* Depth-first search (DFS)
+* Browser back button
+Worked example: push 1, push 2, push 3, pop, pop → the pops return 3, then 2. The stack now holds just [1].
+Queues
+A queue is FIFO (first in, first out): items leave in the order they arrived, like a line at a store.
+Core operations (all O(1) with a good implementation):
+* enqueue(x): add x to the rear
+* dequeue(): remove and return the front item
+* peek() / front(): return the front item without removing it
+* isEmpty(), size()
+Implementations:
+* Linked list: keep both a head (front) and a tail (rear) pointer. Enqueue at the tail, dequeue at the head, both O(1).
+* Plain array (naive): dequeuing from index 0 means shifting every item left, which is O(n). Avoid this.
+* Circular array (circular buffer): keep front and rear indices that wrap around with modulo: rear = (rear + 1) % capacity. Enqueue and dequeue are both O(1) and no shifting is needed.
+Circular queue details:
+* Problem: with only front and rear, a full queue and an empty queue can look the same (front == rear).
+* Fix 1: keep a separate count of items. Empty when count == 0, full when count == capacity.
+* Fix 2: leave one slot always empty. Full when (rear + 1) % capacity == front.
+Variations:
+* Deque (double-ended queue): add and remove at both ends in O(1). Can act as a stack or a queue.
+* Priority queue: items leave in priority order, not arrival order. Usually built with a heap: insert and remove are O(log n), peek at the top priority is O(1).
+Common uses:
+* Breadth-first search (BFS)
+* Task scheduling and printer queues
+* Buffers for streaming data and keyboard input
+* Handling requests in order on a server
+Worked example: enqueue 1, 2, 3, then dequeue twice → returns 1, then 2. The queue now holds [3].
+Linked Lists
+A linked list is a chain of nodes, where each node holds data and a pointer to the next node. Nodes are scattered in memory, not stored side by side like an array.
+Types:
+* Singly linked: each node has data and next. You can only move forward. The list ends when next is null.
+* Doubly linked: each node has data, next and prev. You can move both ways, and deleting a node you already have a reference to is O(1). Costs extra memory per node.
+* Circular: the last node points back to the first instead of to null. Useful for round-robin scheduling. Watch for infinite loops when traversing.
+Key pointers:
+* head: the first node. Lose it and you lose the whole list.
+* tail: the last node. Keeping a tail pointer makes inserting at the end O(1) instead of O(n).
+Operations:
+* Insert at head: create node, set newNode.next = head, then head = newNode. O(1).
+* Insert at tail: O(1) with a tail pointer, O(n) without one (you have to walk to the end).
+* Insert after a given node: newNode.next = node.next, then node.next = newNode. O(1). Order matters: if you set node.next first, you lose the rest of the list.
+* Delete head: head = head.next. O(1).
+* Delete a node with a given value: walk the list to find the node before it, then prev.next = prev.next.next. O(n) for the search.
+* Search / access the i-th item: walk from the head. O(n). There is no random access.
+Arrays vs linked lists:
+* Arrays: O(1) access by index, good cache performance, but inserting or deleting in the middle is O(n) because items shift.
+* Linked lists: O(1) insert/delete once you are at the right spot, no resizing, but O(n) access and extra memory for pointers.
+Classic techniques:
+* Reverse a list: walk through with three pointers (prev, curr, next), flipping each curr.next to point at prev. O(n) time, O(1) space.
+* Find the middle: slow pointer moves 1 step, fast pointer moves 2. When fast hits the end, slow is at the middle.
+* Detect a cycle (Floyd's algorithm): same slow/fast pointers. If they ever meet, there is a cycle.
+* Dummy (sentinel) head node: a fake node before the real head that removes special cases when inserting or deleting at the front.
+Big-O Summary
+Every core stack and queue operation is O(1); linked lists are O(1) only at the ends and O(n) for anything that needs a search.
+Structure
+	Insert
+	Remove
+	Access / search
+	Notes
+	Stack (array or linked list)
+	O(1) push
+	O(1) pop
+	O(1) peek top, O(n) search
+	Array push is O(1) amortized when resizing
+	Queue (linked list or circular array)
+	O(1) enqueue
+	O(1) dequeue
+	O(1) peek front, O(n) search
+	Naive array dequeue is O(n)
+	Deque
+	O(1) at both ends
+	O(1) at both ends
+	O(n) search
+	
+
+	Priority queue (heap)
+	O(log n)
+	O(log n)
+	O(1) peek top priority
+	
+
+	Singly linked list
+	O(1) at head, O(1) at tail with tail pointer
+	O(1) at head, O(n) at tail
+	O(n)
+	Removing the tail needs the node before it
+	Doubly linked list
+	O(1) at either end
+	O(1) at either end or given node
+	O(n)
+	Extra prev pointer per node
+	Array (for comparison)
+	O(n) in middle, O(1) amortized at end
+	O(n) in middle, O(1) at end
+	O(1) by index
+	
+
+	Common Exam Questions and Traps
+* Trace a sequence of operations. Write the structure down after every step. Stacks: the top is where you last pushed. Queues: front is the oldest item.
+* Implement a queue using two stacks. Push onto stack 1 for enqueue. For dequeue, if stack 2 is empty, pop everything from stack 1 onto stack 2, then pop from stack 2. Each item moves at most twice, so it is O(1) amortized.
+* Implement a stack using queues. Possible but awkward: one of push or pop becomes O(n).
+* Pick the right structure. Undo, recursion, matching brackets, DFS → stack. Scheduling, BFS, buffers, "in the order received" → queue. Frequent inserts/deletes in the middle with no need for indexing → linked list.
+* Forgetting edge cases in linked list code: empty list (head == null), one-node list, deleting the head, deleting the tail (update the tail pointer).
+* Wrong pointer order when inserting: set the new node's next before relinking the old node, or the rest of the list is lost.
+* Circular queue full vs empty: be ready to explain why front == rear is ambiguous and the two fixes (a count, or one empty slot).
+* "Why is array-based dequeue slow?" Removing from index 0 shifts every remaining item: O(n).
+* Null pointer errors: always check node != null (and node.next != null when looking ahead) before following a pointer.
+* Big-O questions: know that linked lists have no O(1) access by index, and that a tail pointer is what makes tail insertion O(1).
